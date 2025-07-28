@@ -112,12 +112,15 @@ builder.Services.AddScoped<Microsoft.SemanticKernel.Kernel>(sp =>
         .AddOpenAIChatCompletion(modelId: openAiModel, apiKey: openAiKey)
         //.AddGoogleAIGeminiChatCompletion(modelId: geminiModel, apiKey: geminiKey)
         .Build();
+    
+    var loggerSeq = sp.GetRequiredService<ILogger<SeqPlugin>>();
+    var loggerFile = sp.GetRequiredService<ILogger<FilePlugin>>();
+    var loggerTodo = sp.GetRequiredService<ILogger<ToDoPlugin>>();
 
     var dbContext = sp.GetRequiredService<TodoContext>();
-    var filePlugin = new FilePlugin(sp, dbContext, embeddingGenerator);
-    var todoPlugin = new ToDoPlugin(sp, dbContext, embeddingGenerator, new TodoService(dbContext, new HttpContextAccessor()));
-    var logger = sp.GetRequiredService<ILogger<SeqPlugin>>();
-    var seqPlugin = new SeqPlugin(logger);
+    var filePlugin = new FilePlugin(sp, dbContext, embeddingGenerator, loggerFile);
+    var todoPlugin = new ToDoPlugin(sp, dbContext, embeddingGenerator, new TodoService(dbContext, new HttpContextAccessor()), loggerTodo);
+    var seqPlugin = new SeqPlugin(loggerSeq);
 
     kernel.Plugins.AddFromObject(filePlugin, "FilePlugin");
     kernel.Plugins.AddFromObject(todoPlugin, "ToDoPlugin");

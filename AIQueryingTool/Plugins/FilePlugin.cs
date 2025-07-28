@@ -1,6 +1,7 @@
 ﻿using Microsoft.SemanticKernel;
 using System.ComponentModel;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
 using TodoApi.Models;
 using Pgvector.EntityFrameworkCore;
 using WebApplication2.Services;
@@ -13,13 +14,14 @@ namespace TodoApi.Plugins
         private readonly TodoContext _context;
         private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator;
         private readonly TodoService _todoService;
+        private readonly ILogger<FilePlugin> _logger;
 
-        public FilePlugin(IServiceProvider serviceProvider, TodoContext context, IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator)
+        public FilePlugin(IServiceProvider serviceProvider, TodoContext context, IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator, ILogger<FilePlugin> logger)
         {
             _serviceProvider = serviceProvider;
             _context = context;
             _embeddingGenerator = embeddingGenerator;
-
+            _logger = logger;
         }
         
         [KernelFunction, Description("Searches if the user's prompt can be found in the files from the database. Always read from the most similar file.")]
@@ -37,6 +39,7 @@ namespace TodoApi.Plugins
                 .Take(5) // Take the 5 closest
                 .ToList();
 
+            _logger.LogInformation("searchFileContent invoked");
             
             return closestChunks;
         }

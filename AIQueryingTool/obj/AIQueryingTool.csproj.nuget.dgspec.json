@@ -96,6 +96,10 @@
               "target": "Package",
               "version": "[8.0.1, )"
             },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
             "Microsoft.SemanticKernel": {
               "target": "Package",
               "version": "[1.61.0, )"

@@ -28,7 +28,7 @@ public class SeqPlugin
         {
             Console.WriteLine(evt.RenderedMessage); 
             
-            _logger.LogInformation("Getting logs based on filters");
+            _logger.LogInformation("QueryLogs invoked");
             
             logs.Add(evt.RenderedMessage);
         }
@@ -44,7 +44,7 @@ public class SeqPlugin
         foreach (var row in res.Rows)
             messageTemplates.Add((string)row[0]);
 
-        _logger.LogInformation("Getting all seq message templates");
+        _logger.LogInformation("GetSEQMessageStructure invoked");
 
         return messageTemplates;
 
@@ -55,7 +55,7 @@ public class SeqPlugin
     public async Task<IEnumerable<Object>> GetSeqLogsQuery(string query)
     {
         var result = await _conn.Data.QueryAsync(query); 
-        _logger.LogInformation("Counting some instances...");
+        _logger.LogInformation("GetSeqLogsQuery invoked");
 
         return result.Rows;
     }

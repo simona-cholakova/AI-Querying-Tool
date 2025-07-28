@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using TodoApi.Models;
 using TodoApi.Utils;
@@ -22,6 +23,7 @@ namespace TodoApi.Controllers
         private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator;
         private readonly IServiceProvider _serviceProvider;
         private readonly KernelUtils _kernelUtils;
+        private readonly ILogger<PromptController> _logger;
 
         public PromptController(
             Kernel kernel,
@@ -30,7 +32,8 @@ namespace TodoApi.Controllers
             TodoContext context,
             IServiceProvider serviceProvider,
             IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
-            KernelUtils kernelUtils)
+            KernelUtils kernelUtils,
+            ILogger<PromptController> logger)
         {
             _kernel = kernel;
             _chatCompletionService = chatService;
@@ -39,6 +42,7 @@ namespace TodoApi.Controllers
             _embeddingGenerator = embeddingGenerator;
             _serviceProvider = serviceProvider;
             _kernelUtils = kernelUtils;
+            _logger = logger;
         }
 
         // General Chat Prompt
@@ -52,6 +56,7 @@ namespace TodoApi.Controllers
                 FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
             }, _kernel);
 
+            _logger.LogInformation("/chat endpoint reached");
             await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
             return Ok(result[0].Content);
         }
@@ -76,6 +81,8 @@ namespace TodoApi.Controllers
 
             var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
 
+            _logger.LogInformation("/logs endpoint reached");
+            
             await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
 
             return Ok(result[0].Content);
@@ -102,6 +109,8 @@ namespace TodoApi.Controllers
 
             var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
 
+            _logger.LogInformation("/todos endpoint reached");
+            
             await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
 
             return Ok(result[0].Content);
@@ -126,6 +135,8 @@ namespace TodoApi.Controllers
             };
     
             var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
+
+            _logger.LogInformation("/rules endpoint reached");
 
             await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
 

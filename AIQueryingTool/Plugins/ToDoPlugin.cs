@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace TodoApi.Plugins;
 using Microsoft.SemanticKernel;
@@ -16,13 +17,15 @@ public class ToDoPlugin
     private readonly TodoContext _context;
     private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator;
     private readonly TodoService _todoService;
+    private readonly ILogger<ToDoPlugin> _logger;
     
-    public ToDoPlugin(IServiceProvider serviceProvider, TodoContext context, IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator, TodoService todoService)
+    public ToDoPlugin(IServiceProvider serviceProvider, TodoContext context, IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator, TodoService todoService, ILogger<ToDoPlugin> logger)
     {
         _serviceProvider = serviceProvider;
         _context = context;
         _embeddingGenerator = embeddingGenerator;
         _todoService = todoService;
+        _logger = logger;
     }
     
     [KernelFunction("GetAllTodos"), Description("This function gets all todo tasks")]
@@ -34,6 +37,8 @@ public class ToDoPlugin
         var tasks = await db.ToDoItems.ToListAsync();
         if (tasks.Count == 0) return "You have no todo tasks.";
 
+        _logger.LogInformation("GetAllTodosAsync invoked");
+        
         var result = string.Join("\n", tasks.Select(t => $"- {t.Name}"));
         return result;
     }
@@ -46,7 +51,7 @@ public class ToDoPlugin
         {
             return true;
         }
-
+        _logger.LogInformation("CreateToDo invoked");
         return false;
     }
     
@@ -58,6 +63,8 @@ public class ToDoPlugin
             return true;
         }
 
+        _logger.LogInformation("deleteToDoItem invoked");
+
         return false;
     }
     
@@ -68,6 +75,8 @@ public class ToDoPlugin
         {
             return true;
         }
+
+        _logger.LogInformation("updateToDoItem invoked");
 
         return false;
     }
