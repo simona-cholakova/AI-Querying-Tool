@@ -12,10 +12,10 @@ public class KernelUtils
     private readonly UserManager<User> _userManager;
     private readonly TodoContext _context;
 
-    public KernelUtils(TodoContext _context, UserManager<User> userManager)
+    public KernelUtils(TodoContext context, UserManager<User> userManager)
     {
         _userManager = userManager;
-        _context = _context;
+        _context = context;
     }
     
     public async Task<ChatHistory> BuildChatHistory(string inputText, ClaimsPrincipal user)

@@ -68,7 +68,7 @@ namespace TodoApi.Controllers
             KernelFunction getLogs = _kernel.Plugins.GetFunction("SeqPlugin", "GetLogs");
             KernelFunction getTemplates = _kernel.Plugins.GetFunction("SeqPlugin", "GetTemplates");
             KernelFunction searchFiles = _kernel.Plugins.GetFunction("FilePlugin", "searchFileContent");
-            
+    
             var settings = new OpenAIPromptExecutionSettings
             {
                 FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(functions: [getTemplates, getLogs, searchFiles])
@@ -76,8 +76,11 @@ namespace TodoApi.Controllers
 
             var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
 
+            await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
+
             return Ok(result[0].Content);
         }
+
 
         // ToDos Query
         [Authorize]
@@ -99,8 +102,11 @@ namespace TodoApi.Controllers
 
             var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
 
+            await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
+
             return Ok(result[0].Content);
         }
+
 
 
         // Rules-Based Logic
@@ -111,21 +117,21 @@ namespace TodoApi.Controllers
             var chatHistory = new ChatHistory();
             chatHistory.AddSystemMessage(SystemMessages.SystemMessageForRules());
             chatHistory.AddUserMessage(inputText);
-            
+    
             KernelFunction searchFiles = _kernel.Plugins.GetFunction("FilePlugin", "searchFileContent");
 
             var settings = new OpenAIPromptExecutionSettings
             {
                 FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(functions: [searchFiles])
             };
-            
-            var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, new OpenAIPromptExecutionSettings
-            {
-                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
-            }, _kernel);
+    
+            var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
+
+            await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
 
             return Ok(result[0].Content);
         }
+
         
     }
 }
