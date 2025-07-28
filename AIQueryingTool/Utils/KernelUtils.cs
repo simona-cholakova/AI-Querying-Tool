@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel.ChatCompletion;
 using TodoApi.Models;
 using System.Security.Claims;
+using AIQueryingTool;
 
 namespace TodoApi.Utils;
 
@@ -11,6 +12,7 @@ public class KernelUtils
     
     private readonly UserManager<User> _userManager;
     private readonly TodoContext _context;
+    private readonly string _systemMessage;
 
     public KernelUtils(TodoContext context, UserManager<User> userManager)
     {
@@ -18,10 +20,10 @@ public class KernelUtils
         _context = context;
     }
     
-    public async Task<ChatHistory> BuildChatHistory(string inputText, ClaimsPrincipal user)
+    public async Task<ChatHistory> BuildChatHistory(string inputText, ClaimsPrincipal user, string systemMessage)
     {
         var chatHistory = new ChatHistory();
-
+        chatHistory.AddSystemMessage(systemMessage); 
         if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
         {
             throw new InvalidOperationException("User is not authenticated.");

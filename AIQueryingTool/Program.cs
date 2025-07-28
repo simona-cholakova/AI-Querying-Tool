@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.Extensions.AI;
+using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -133,6 +134,7 @@ builder.Services.AddScoped<Microsoft.SemanticKernel.Kernel>(sp =>
 // ────── Optional Utility Services ──────
 builder.Services.AddScoped<AIOptionService>();
 builder.Services.AddScoped<KernelUtils>();
+builder.Services.AddScoped<KernelService>();
 
 
 // ────── Use OpenAI Chat by Default ──────
