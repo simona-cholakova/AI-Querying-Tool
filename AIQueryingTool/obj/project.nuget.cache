@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "20hZ+RSqjQM=",
+  "dgSpecHash": "jUXRj+Rn/no=",
   "success": true,
   "projectFilePath": "C:\\Users\\adm-scholakova\\RiderProjects\\AIQueryingTool\\AIQueryingTool\\AIQueryingTool.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,8 @@
     "C:\\Users\\adm-scholakova\\.nuget\\packages\\azure.ai.openai\\2.2.0-beta.5\\azure.ai.openai.2.2.0-beta.5.nupkg.sha512",
     "C:\\Users\\adm-scholakova\\.nuget\\packages\\azure.core\\1.47.0\\azure.core.1.47.0.nupkg.sha512",
     "C:\\Users\\adm-scholakova\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\adm-scholakova\\.nuget\\packages\\libgit2sharp\\0.31.0\\libgit2sharp.0.31.0.nupkg.sha512",
+    "C:\\Users\\adm-scholakova\\.nuget\\packages\\libgit2sharp.nativebinaries\\2.0.323\\libgit2sharp.nativebinaries.2.0.323.nupkg.sha512",
     "C:\\Users\\adm-scholakova\\.nuget\\packages\\microsoft.aspnetcore.antiforgery\\2.3.0\\microsoft.aspnetcore.antiforgery.2.3.0.nupkg.sha512",
     "C:\\Users\\adm-scholakova\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.3.0\\microsoft.aspnetcore.authentication.2.3.0.nupkg.sha512",
     "C:\\Users\\adm-scholakova\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.3.0\\microsoft.aspnetcore.authentication.abstractions.2.3.0.nupkg.sha512",

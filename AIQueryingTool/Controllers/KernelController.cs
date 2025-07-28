@@ -116,6 +116,30 @@ namespace TodoApi.Controllers
             return Ok(result[0].Content);
         }
 
+        [Authorize]
+        [HttpPost("gitCommits")]
+        public async Task<IActionResult> HandleGitCommits([FromBody] string inputText)
+        {
+            var chatHistory = new ChatHistory();
+            chatHistory.AddSystemMessage(SystemMessages.SystemMessageForRules());
+            chatHistory.AddUserMessage(inputText);
+            
+            KernelFunction getGitCommits = _kernel.Plugins.GetFunction("GitPlugin", "GetGitCommits");
+
+            var settings = new OpenAIPromptExecutionSettings
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(functions: [getGitCommits])
+            };
+    
+            var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
+
+            _logger.LogInformation("/gitCommits endpoint reached");
+
+            await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
+            
+            return Ok(result[0].Content);
+            
+        }
 
 
         // Rules-Based Logic

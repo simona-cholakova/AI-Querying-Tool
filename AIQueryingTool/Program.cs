@@ -1,5 +1,4 @@
-﻿using Accord.Statistics.Kernels;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.Extensions.AI;
-using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -116,15 +114,18 @@ builder.Services.AddScoped<Microsoft.SemanticKernel.Kernel>(sp =>
     var loggerSeq = sp.GetRequiredService<ILogger<SeqPlugin>>();
     var loggerFile = sp.GetRequiredService<ILogger<FilePlugin>>();
     var loggerTodo = sp.GetRequiredService<ILogger<ToDoPlugin>>();
+    var loggerGit = sp.GetRequiredService<ILogger<GitPlugin>>();
 
     var dbContext = sp.GetRequiredService<TodoContext>();
     var filePlugin = new FilePlugin(sp, dbContext, embeddingGenerator, loggerFile);
     var todoPlugin = new ToDoPlugin(sp, dbContext, embeddingGenerator, new TodoService(dbContext, new HttpContextAccessor()), loggerTodo);
     var seqPlugin = new SeqPlugin(loggerSeq);
+    var gitPlugin = new GitPlugin(loggerGit);
 
     kernel.Plugins.AddFromObject(filePlugin, "FilePlugin");
     kernel.Plugins.AddFromObject(todoPlugin, "ToDoPlugin");
     kernel.Plugins.AddFromObject(seqPlugin, "SeqPlugin");
+    kernel.Plugins.AddFromObject(gitPlugin, "GitPlugin");
 
     return kernel;
 });

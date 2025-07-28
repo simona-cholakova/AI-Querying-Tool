@@ -77,3 +77,4 @@ C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AppHost1\obj\Debug\net8.0\A
 C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AppHost1\obj\Debug\net8.0\AppHost1.genruntimeconfig.cache
 C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AppHost1\obj\Debug\net8.0\ref\AppHost1.dll
 C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AppHost1\obj\Debug\net8.0\Aspire\references\AIQueryingTool.ProjectMetadata.g.cs
+C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AppHost1\obj\Debug\net8.0\AppHost1.sourcelink.json
