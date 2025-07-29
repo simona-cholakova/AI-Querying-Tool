@@ -108,6 +108,10 @@
               "target": "Package",
               "version": "[1.61.0, )"
             },
+            "ModelContextProtocol": {
+              "target": "Package",
+              "version": "[0.3.0-preview.3, )"
+            },
             "PdfPig": {
               "target": "Package",
               "version": "[0.1.11-alpha-20250721-5abdf, )"

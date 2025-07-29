@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ModelContextProtocol.Client;
 using TodoApi.Models;
 using TodoApi.Plugins;
 using TodoApi.Utils;
@@ -102,6 +103,24 @@ builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<TodoContext>()
     .AddApiEndpoints();
 
+//────── MCP Client Set-Up ──────
+IMcpClient mcpClient = await McpClientFactory.CreateAsync(new StdioClientTransport(new()
+{
+    Name = "MCP_CLIENT", Command = "docker", Arguments =
+    [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "POSTGRES_URL",
+        "mcp/postgres",
+        "postgresql://postgres:Dukserka@localhost:32774/ToDoTable",
+    ]
+}));
+
+IList<McpClientTool> mcpTools = await mcpClient.ListToolsAsync();
+
+
 // ────── Semantic Kernel & Plugins Setup ──────
 builder.Services.AddScoped<Microsoft.SemanticKernel.Kernel>(sp =>
 {
@@ -127,9 +146,14 @@ builder.Services.AddScoped<Microsoft.SemanticKernel.Kernel>(sp =>
     kernel.Plugins.AddFromObject(todoPlugin, "ToDoPlugin");
     kernel.Plugins.AddFromObject(seqPlugin, "SeqPlugin");
     kernel.Plugins.AddFromObject(gitPlugin, "GitPlugin");
+    
+#pragma warning disable SKEXP0001
+    kernel.Plugins.AddFromFunctions("McpToolPlugin", mcpTools.Select(t => t.AsKernelFunction()));
+#pragma warning restore SKEXP0001
 
     return kernel;
 });
+
 
 // ────── Optional Utility Services ──────
 builder.Services.AddScoped<AIOptionService>();

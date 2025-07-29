@@ -9,7 +9,7 @@ namespace TodoApi.Plugins;
 public class SeqPlugin
 {
     
-    private readonly SeqConnection _conn = new SeqConnection("http://localhost:32768", "uk4JpNvfRyIinD5o5T6Y");
+    private readonly SeqConnection _conn = new SeqConnection("http://localhost:32774", "lLNBlGneopUejot7vIIM");
     private readonly ILogger<SeqPlugin> _logger;
 
     public SeqPlugin(ILogger<SeqPlugin> logger)

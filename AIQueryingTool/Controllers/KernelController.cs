@@ -69,14 +69,18 @@ public class PromptController : ControllerBase
     public async Task<IActionResult> HandleSeqLogs([FromBody] string inputText)
     {
         var chatHistory = await _kernelUtils.BuildChatHistory(inputText, User, SystemMessages.SystemMessageForSplunkSeq());
-
+        
         var settings = new OpenAIPromptExecutionSettings
         {
             FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(new[]
             {
                 _kernel.Plugins.GetFunction("SeqPlugin", "GetTemplates"),
                 _kernel.Plugins.GetFunction("SeqPlugin", "GetLogs"),
-                _kernel.Plugins.GetFunction("FilePlugin", "searchFileContent")
+                _kernel.Plugins.GetFunction("FilePlugin", "searchFileContent"),
+                /*
+                _kernel.Plugins.GetFunction("McpToolPlugin", "query")
+                */
+
             })
         };
 
@@ -118,7 +122,7 @@ public class PromptController : ControllerBase
             FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(new[]
             {
                 _kernel.Plugins.GetFunction("GitPlugin", "GetGitCommits"),
-                _kernel.Plugins.GetFunction("GitPlugin", "GetCommitDiff")
+                _kernel.Plugins.GetFunction("GitPlugin", "GetCommitDiff"),
             })
         };
 

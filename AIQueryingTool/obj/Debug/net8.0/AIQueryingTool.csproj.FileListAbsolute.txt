@@ -177,3 +177,6 @@ C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\ne
 C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\net8.0\runtimes\win-arm64\native\git2-3f4182d.dll
 C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\net8.0\runtimes\win-x64\native\git2-3f4182d.dll
 C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\net8.0\runtimes\win-x86\native\git2-3f4182d.dll
+C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\net8.0\ModelContextProtocol.dll
+C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\net8.0\ModelContextProtocol.Core.dll
+C:\Users\adm-scholakova\RiderProjects\AIQueryingTool\AIQueryingTool\bin\Debug\net8.0\System.Net.ServerSentEvents.dll
