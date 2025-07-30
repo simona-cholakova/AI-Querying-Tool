@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIQueryingTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ceccd8d72cd9cb8381aed5daf72d487395fe0c68")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68273e06e3f278d8539ea7331dd832fde458dbc7")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIQueryingTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIQueryingTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

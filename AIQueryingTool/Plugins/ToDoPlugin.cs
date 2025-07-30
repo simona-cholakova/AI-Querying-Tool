@@ -29,31 +29,34 @@ public class ToDoPlugin
     }
     
     [KernelFunction("GetAllTodos"), Description("This function gets all todo tasks")]
-    public async Task<string> GetAllTodoTasksAsync()
+    public async Task<string> GetAllTodoTasksAsync(string userId)
     {
         using var scope = _serviceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<TodoContext>();
 
-        var tasks = await db.ToDoItems.ToListAsync();
+        var tasks = await db.ToDoItems.Where(t => t.UserId == userId).ToListAsync(); // ✅ Filter by userId
         if (tasks.Count == 0) return "You have no todo tasks.";
 
         _logger.LogInformation("GetAllTodosAsync invoked");
-        
+
         var result = string.Join("\n", tasks.Select(t => $"- {t.Name}"));
         return result;
     }
 
+
     [KernelFunction("createTodo")]
     [Description("Creates a new todo for the current user. Returns true if the task was successfully added")]
-    public async Task<bool> addTodoItem(string task, bool isComplete)
+    public async Task<bool> addTodoItem(string task, bool isComplete, string userId)
     {
-        if (await _todoService.AddTodo(isComplete, task))
+        if (await _todoService.AddTodo(isComplete, task, userId))
         {
             return true;
         }
+
         _logger.LogInformation("CreateToDo invoked");
         return false;
     }
+
     
     [KernelFunction, Description("Deletes a todo task from database")]
     public async Task<bool> deleteToDoItem(string task)

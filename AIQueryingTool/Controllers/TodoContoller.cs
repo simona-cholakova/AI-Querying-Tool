@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,8 @@ namespace TodoApi.Controllers
             _context = context;
             _userManager = userManager;
         }
-
+    
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoItemDTO)
         {
@@ -38,6 +40,7 @@ namespace TodoApi.Controllers
 
 
         // GET: api/todo/{id}
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItemById(long id)
         {
@@ -52,6 +55,7 @@ namespace TodoApi.Controllers
         }
 
         // DELETE: api/todo/{id}
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
@@ -69,6 +73,7 @@ namespace TodoApi.Controllers
         }
 
         // PUT: api/todo/{id}
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodoItem(long id, TodoItemDTO todoItemDTO)
         {
@@ -108,6 +113,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/todo
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
         {

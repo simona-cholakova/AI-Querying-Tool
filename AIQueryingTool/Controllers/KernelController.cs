@@ -1,4 +1,6 @@
 ﻿// PromptController.cs
+
+using System.Security.Claims;
 using AIQueryingTool;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -94,7 +96,12 @@ public class PromptController : ControllerBase
     [HttpPost("todos")]
     public async Task<IActionResult> HandleTodos([FromBody] string inputText)
     {
-        var chatHistory = await _kernelUtils.BuildChatHistory(inputText, User, SystemMessages.SystemMessageForTodos());
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null) return Unauthorized();
+
+        var enhancedInput = $"{inputText}\nUserId: {userId}";
+
+        var chatHistory = await _kernelUtils.BuildChatHistory(enhancedInput, User, SystemMessages.SystemMessageForTodos());
 
         var settings = new OpenAIPromptExecutionSettings
         {
@@ -108,7 +115,9 @@ public class PromptController : ControllerBase
 
         var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
         _logger.LogInformation("/todos endpoint reached");
+
         return Ok(result[0].Content);
+
     }
 
     [Authorize]

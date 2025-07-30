@@ -30,20 +30,21 @@ public class TodoService
         return todos;
     }
 
-    public async Task<bool> AddTodo(bool isComplete, string task)
+    public async Task<bool> AddTodo(bool isComplete, string task, string userId)
     {
-        TodoItem todoItem = new TodoItem { UserId = GetUserId(), IsComplete = isComplete, Name = task };
-        await _context.ToDoItems.AddAsync(todoItem);
-     
-        int changes = await _context.SaveChangesAsync();
-
-        if (changes > 0)
+        var todoItem = new TodoItem
         {
-            return true;
-        }
-     
-        return false;
+            Name = task,
+            IsComplete = isComplete,
+            UserId = userId
+        };
+
+        _context.ToDoItems.Add(todoItem);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
+
 
     public TodoItem GetTodoItem(int todoid)
     {
@@ -59,8 +60,10 @@ public class TodoService
 
     public async Task<bool> DeleteTodoItem(string taskName)
     {
+        var userId = GetUserId();
         var todoItem = await _context.ToDoItems
-            .FirstOrDefaultAsync(t => t.Name != null && t.Name.Contains(taskName));
+            .FirstOrDefaultAsync(t => t.UserId == userId && t.Name != null && t.Name.Contains(taskName));
+
 
         if (todoItem == null)
         {
@@ -73,8 +76,9 @@ public class TodoService
 
     public async Task<bool> UpdateTodoItem(string taskName)
     {
+        var userId = GetUserId();
         var todoItem = await _context.ToDoItems
-            .FirstOrDefaultAsync(t => t.Name != null && t.Name.Contains(taskName));
+            .FirstOrDefaultAsync(t => t.UserId == userId && t.Name != null && t.Name.Contains(taskName));
         
         if (todoItem == null || todoItem.UserId != GetUserId())
         {

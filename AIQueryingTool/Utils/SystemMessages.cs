@@ -89,6 +89,7 @@ public class SystemMessages
            - To-dos
            - Transaction rules
            - Log analysis
+           - Git commits analysis
 
         3. Respond clearly and use structured formatting where possible.
         4. If you use a plugin/tool, say which one and what it returned.
