@@ -3,6 +3,7 @@ using System.Text.Json;
 using Accord.MachineLearning;
 using Accord.Math.Distances;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Pgvector;
 using TodoApi.Models;
@@ -20,6 +21,38 @@ namespace WebApplication2.Services
         {
             _context = context;
             _embeddingGenerator = embeddingGenerator;
+        }
+        
+        public async Task<(bool Success, string Message)> HandleFileUploadAsync(IFormFile newFile)
+        {
+            if (newFile == null || string.IsNullOrWhiteSpace(newFile.FileName))
+                return (false, "Invalid file data.");
+
+            var exists = await _context.FileRecords.AnyAsync(f => f.FileName == newFile.FileName);
+            if (exists)
+                return (false, $"File '{newFile.FileName}' already exists.");
+
+            var fileRecord = await ProcessFileAsync(newFile);
+            if (fileRecord == null)
+                return (false, "Unsupported or invalid file format.");
+
+            await _context.FileRecords.AddAsync(fileRecord);
+            await _context.FileChunks.AddRangeAsync(fileRecord.Chunks);
+            await _context.SaveChangesAsync();
+
+            return (true, $"File '{newFile.FileName}' uploaded with {fileRecord.Chunks.Count} chunk(s).");
+        }
+
+        public async Task<(bool Success, string Message, FileRecord? File)> FetchFileByNameAsync(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return (false, "File name is required.", null);
+
+            var file = await _context.FileRecords.FirstOrDefaultAsync(f => f.FileName == fileName);
+
+            return file != null
+                ? (true, "File retrieved.", file)
+                : (false, "File not found.", null);
         }
         
         public static string FlattenJson(JsonElement element)
@@ -83,7 +116,7 @@ namespace WebApplication2.Services
             return chunks;
         }
 
-        /*public void KMeansClustering(FileRecord uploadedFile)
+        public void KMeansClustering(FileRecord uploadedFile)
         {
             var chunksList = uploadedFile.Chunks.ToList();
 
@@ -116,7 +149,7 @@ namespace WebApplication2.Services
 
             // Save changes to the database
             _context.SaveChanges();
-        }*/
+        }
         
         public async Task ProcessBatch(List<string> batch, FileRecord fileRecord)
         {

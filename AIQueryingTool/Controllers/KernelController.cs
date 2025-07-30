@@ -1,6 +1,4 @@
-﻿// PromptController.cs
-
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AIQueryingTool;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -93,7 +91,7 @@ public class PromptController : ControllerBase
     
     
     [Authorize]
-    [HttpPost("mcp-query")]
+    [HttpPost("aboutDatabase")]
     public async Task<IActionResult> HandleMcpToolQuery([FromBody] string inputText)
     {
         var chatHistory = await _kernelUtils.BuildChatHistory(inputText, User, SystemMessages.SystemMessageForMcpQuery());
@@ -107,7 +105,7 @@ public class PromptController : ControllerBase
         };
     
         var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
-        _logger.LogInformation("/mcp-query endpoint reached");
+        _logger.LogInformation("/aboutDatabase endpoint reached");
         await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
         return Ok(result[0].Content);
     }

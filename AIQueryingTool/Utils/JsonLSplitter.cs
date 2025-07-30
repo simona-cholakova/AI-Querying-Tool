@@ -5,25 +5,6 @@ using System.Text.Json;
  
 public class JsonLSplitter
 {
-    public static List<string> GetText(Stream fileStream)
-    {
-        var logs = new List<string>();
- 
-        var reader = new StreamReader(fileStream, Encoding.UTF8, leaveOpen: true);
-        string line;
-        while ((line = reader.ReadLine()) != null)
-        {
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-                if (!string.IsNullOrWhiteSpace(line))
-                {
-                    logs.Add(ExtractValuesOnly(line));
-                }
-            }
-        }
- 
-        return logs;
-    }
     public static string ExtractValuesOnly(string jsonLine)
     {
         using var doc = JsonDocument.Parse(jsonLine);
