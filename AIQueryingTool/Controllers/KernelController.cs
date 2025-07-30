@@ -81,8 +81,7 @@ public class PromptController : ControllerBase
                 _kernel.Plugins.GetFunction("FilePlugin", "searchFileContent"),
                 /*
                 _kernel.Plugins.GetFunction("McpToolPlugin", "query")
-                */
-
+            */
             })
         };
 
@@ -91,6 +90,28 @@ public class PromptController : ControllerBase
         await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
         return Ok(result[0].Content);
     }
+    
+    
+    [Authorize]
+    [HttpPost("mcp-query")]
+    public async Task<IActionResult> HandleMcpToolQuery([FromBody] string inputText)
+    {
+        var chatHistory = await _kernelUtils.BuildChatHistory(inputText, User, SystemMessages.SystemMessageForMcpQuery());
+    
+        var settings = new OpenAIPromptExecutionSettings
+        {
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(new[]
+            {
+                _kernel.Plugins.GetFunction("McpToolPlugin", "query")
+            })
+        };
+    
+        var result = await _chatCompletionService.GetChatMessageContentsAsync(chatHistory, settings, _kernel);
+        _logger.LogInformation("/mcp-query endpoint reached");
+        await _kernelUtils.SaveHistory(inputText, result[0].Content, User);
+        return Ok(result[0].Content);
+    }
+
 
     [Authorize]
     [HttpPost("todos")]

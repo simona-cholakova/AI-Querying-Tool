@@ -114,7 +114,7 @@ IMcpClient mcpClient = await McpClientFactory.CreateAsync(new StdioClientTranspo
         "-e",
         "POSTGRES_URL",
         "mcp/postgres",
-        "postgresql://postgres:Dukserka@localhost:32774/ToDoTable",
+        "postgres://postgres:Dukserka@host.docker.internal:5432/ToDoTable",
     ]
 }));
 
