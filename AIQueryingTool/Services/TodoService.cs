@@ -1,100 +1,92 @@
-﻿using System.ComponentModel;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.SemanticKernel;
 using TodoApi.Models;
 
-namespace WebApplication2.Services;
-
-public class TodoService
+namespace WebApplication2.Services
 {
-    private readonly TodoContext _context;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public TodoService(TodoContext context, IHttpContextAccessor httpContextAccessor)
+    public class TodoService
     {
-        _context = context;
-        _httpContextAccessor = httpContextAccessor;
-    }
+        private readonly TodoContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private string GetUserId()
-    {
-        string userid = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        return userid;
-    }
-    public async Task<IEnumerable<TodoItem>> GetAllTodos()
-    {
-        List<TodoItem> todos = await _context.ToDoItems.Where(p => p.UserId == GetUserId()).ToListAsync();
-
-        return todos;
-    }
-
-    public async Task<bool> AddTodo(bool isComplete, string task, string userId)
-    {
-        var todoItem = new TodoItem
+        public TodoService(TodoContext context, IHttpContextAccessor httpContextAccessor)
         {
-            Name = task,
-            IsComplete = isComplete,
-            UserId = userId
-        };
-
-        _context.ToDoItems.Add(todoItem);
-        await _context.SaveChangesAsync();
-
-        return true;
-    }
-
-
-    public TodoItem GetTodoItem(int todoid)
-    {
-        var todoItem = _context.ToDoItems.Find(todoid);
-
-        if (todoItem == null)
-        {
-            return null;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        return todoItem;
-    }
-
-    public async Task<bool> DeleteTodoItem(string taskName)
-    {
-        var userId = GetUserId();
-        var todoItem = await _context.ToDoItems
-            .FirstOrDefaultAsync(t => t.UserId == userId && t.Name != null && t.Name.Contains(taskName));
-
-
-        if (todoItem == null)
+        private string GetUserId()
         {
-            return false;
+            var user = _httpContextAccessor.HttpContext?.User;
+            return user?.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                ?? throw new InvalidOperationException("User not authenticated");
         }
 
-        _context.ToDoItems.Remove(todoItem);
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public async Task<bool> UpdateTodoItem(string taskName)
-    {
-        var userId = GetUserId();
-        var todoItem = await _context.ToDoItems
-            .FirstOrDefaultAsync(t => t.UserId == userId && t.Name != null && t.Name.Contains(taskName));
-        
-        if (todoItem == null || todoItem.UserId != GetUserId())
+        public async Task<IEnumerable<TodoItem>> GetAllTodos()
         {
-            return false;
+            var userId = GetUserId();
+            return await _context.ToDoItems
+                .Where(t => t.UserId == userId)
+                .ToListAsync();
         }
-      
-        todoItem.IsComplete = true;
 
-
-        if (_context.SaveChanges() > 0)
+        public async Task<TodoItem?> GetTodoItem(long todoId)
         {
+            var userId = GetUserId();
+            return await _context.ToDoItems
+                .FirstOrDefaultAsync(t => t.Id == todoId && t.UserId == userId);
+        }
+
+        public async Task<bool> AddTodo(bool isComplete, string task)
+        {
+            var userId = GetUserId();
+            return await AddTodo(isComplete, task, userId);
+        }
+
+        public async Task<bool> AddTodo(bool isComplete, string task, string userId)
+        {
+            var todoItem = new TodoItem
+            {
+                Name = task,
+                IsComplete = isComplete,
+                UserId = userId
+            };
+
+            _context.ToDoItems.Add(todoItem);
+            await _context.SaveChangesAsync();
             return true;
         }
 
-        return false;
+        public async Task<bool> DeleteTodoItem(string taskName)
+        {
+            var userId = GetUserId();
+            var todoItem = await _context.ToDoItems
+                .FirstOrDefaultAsync(t => t.UserId == userId && t.Name != null && t.Name.Contains(taskName));
 
+            if (todoItem == null)
+            {
+                return false;
+            }
 
+            _context.ToDoItems.Remove(todoItem);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UpdateTodoItem(string taskName)
+        {
+            var userId = GetUserId();
+            var todoItem = await _context.ToDoItems
+                .FirstOrDefaultAsync(t => t.UserId == userId && t.Name != null && t.Name.Contains(taskName));
+
+            if (todoItem == null)
+            {
+                return false;
+            }
+
+            todoItem.IsComplete = true;
+            return await _context.SaveChangesAsync() > 0;
+        }
+        
     }
 }

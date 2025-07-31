@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using ModelContextProtocol.Client;
 using TodoApi.Models;
 using TodoApi.Plugins;
+using TodoApi.Services;
 using TodoApi.Utils;
 using WebApplication2.Services;
 
@@ -158,7 +159,7 @@ builder.Services.AddScoped<Microsoft.SemanticKernel.Kernel>(sp =>
 // ────── Optional Utility Services ──────
 builder.Services.AddScoped<AIOptionService>();
 builder.Services.AddScoped<KernelUtils>();
-builder.Services.AddScoped<KernelService>();
+builder.Services.AddScoped<PromptService>();
 
 
 // ────── Use OpenAI Chat by Default ──────
